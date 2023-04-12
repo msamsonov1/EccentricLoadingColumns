@@ -1,0 +1,32 @@
+# Input parameters, DO NOT USE IN real DESIGN, this is just a simple check.
+P = float(input("Enter the axial load in kips: "))
+M = float(input("Enter the moment in kip-ft: "))
+B = float(input("Enter the width of the column in inches: "))
+L = float(input("Enter the length of the column in inches: "))
+fy = float(input("Enter the yield strength of the material in ksi: "))
+fc = float(input("Enter the compressive strength of the material in ksi: "))
+gamma_c = float(input("Enter the unit weight of concrete in lb/ft^3: "))
+gamma_s = float(input("Enter the unit weight of steel in lb/ft^3: "))
+ecc = float(input("Enter the eccentricity of the load in inches: "))
+
+# Calculation of B' and L'
+alpha = fy / (fy + 0.67 * fc)
+B_prime = B - 2 * alpha * (ecc / 25.4)
+L_prime = L - 2 * alpha * (ecc / 25.4)
+
+# Calculation of e
+e = M * 12 / (P * 1000)
+
+# Calculation of N, Mc, and Sc
+N = gamma_c * B_prime * L_prime / 144
+Mc = gamma_c * B_prime * L_prime * e / 12
+Sc = gamma_c * B_prime * L_prime * ((L_prime ** 2) + (B_prime ** 2)) / 12 / 144
+
+# Calculation of Qall with safety factor of 2
+Qall = (0.4 * fy * Sc + 0.6 * fy * N)
+Qall += (0.4 * fc * Sc + 0.6 * fc * N)
+Qall += (0.5 * gamma_s * B * L) / 144
+Qall /= 2
+
+# Output results
+print(f"Allowable bearing capacity with safety factor of 2: {Qall:.2f} kips")
